@@ -1,47 +1,48 @@
 #include <iostream>
-#include <string>
-#include <cstring>
 using namespace std;
-template <class T>
-class myclass
+
+bool Greater2(int n1, int n2)
 {
-public:
-    T *p;
-    int size;
-    myclass(T *_p, int _size)
-    {
-        p = new T[_size + 1];
-        size = _size;
-        for (int i = 0; i < size; i++)
-            *(p + i) = *(_p + i);
-    }
-    ~myclass()
-    {
-        delete[] p;
-    }
-    void Show()
-    {
-        for (int i = 0; i < size; i++)
+    return n1 > n2;
+}
+bool Greater1(int n1, int n2)
+{
+    return n1 < n2;
+}
+bool Greater3(double d1, double d2)
+{
+    return d1 < d2;
+}
+
+template <class T1, class T2>
+void mysort(T1 *a, T1 *b, T2 c)
+{
+    for(int i = 0; i < b - a - 1; i++)
+        for (int j = 0; j < b - a - 1 - i; j++)
         {
-            cout << p[i] << ",";
+            if (!c(a[j], a[j + 1]))
+            {
+                T1 tmp = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = tmp;
+            }
         }
-        cout << endl;
-    }
-};
-int a[100];
-int main()
+}
+#define NUM 5
+    int main()
 {
-    char line[100];
-    while (cin >> line)
-    {
-        myclass<char> obj(line, strlen(line));;
-        obj.Show();
-        int n;
-        cin >> n;
-        for (int i = 0; i < n; ++i)
-            cin >> a[i];
-        myclass<int> obj2(a, n);
-        obj2.Show();
-    }
+    int an[NUM] = {8,123,11,10,4};
+    mysort(an, an + NUM, Greater1); //从小到大排序 
+    for (int i = 0; i < NUM; i++)
+        cout << an[i] << ",";
+    mysort(an, an + NUM, Greater2); //从大到小排序 
+    cout << endl;
+    for (int i = 0; i < NUM; i++)
+        cout << an[i] << ",";
+    cout << endl;
+    double d[6] = {1.4,1.8,3.2,1.2,3.1,2.1};
+    mysort(d + 1, d + 5, Greater3); //将数组从下标1到下标4从小到大排序 
+    for (int i = 0; i < 6; i++)
+        cout << d[i] << ",";
     return 0;
 }
