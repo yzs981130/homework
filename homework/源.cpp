@@ -1,46 +1,18 @@
 #include <iostream>
 #include <string>
-
 using namespace std;
 template <class T>
-class CMyistream_iterator
+T SumArray(T *a, T *b)
 {
-private:
-    T data;
-    istream &is;
-public:
-    CMyistream_iterator(istream &i):is(i) { is >> data; }
-    T operator *() { return data; }
-    void operator ++ (int)
-    {
-        is >> data;
-    }
-};
-
-
-
+    for (int i = 1; i < b - a; i++)
+        *a += *(a + i);
+    return *a;
+}
 int main()
 {
-    int t;
-    cin >> t;
-    while (t--)
-    {
-        CMyistream_iterator<int> inputInt(cin);
-        int n1, n2, n3;
-        n1 = *inputInt; //读入 n1
-        int tmp = *inputInt;
-        cout << tmp << endl;
-        inputInt++;
-        n2 = *inputInt; //读入 n2
-        inputInt++;
-        n3 = *inputInt; //读入 n3
-        cout << n1 << " " << n2 << " " << n3 << " ";
-        CMyistream_iterator<string> inputStr(cin);
-        string s1, s2;
-        s1 = *inputStr;
-        inputStr++;
-        s2 = *inputStr;
-        cout << s1 << " " << s2 << endl;
-    }
+    string array[4] = {"Tom","Jack","Mary","John"};
+    cout << SumArray(array, array + 4) << endl;
+    int a[4] = {1, 2, 3, 4};  //提示：1+2+3+4 = 10
+    cout << SumArray(a, a + 4) << endl;
     return 0;
 }
