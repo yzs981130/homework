@@ -1,37 +1,26 @@
 #include <iostream>
-#include <string>
 using namespace std;
-template <class T1, class T2>
-T1 Filter(T1 a, T1 b, T1 c, T2 d)
+class MyCin
 {
-    int cnt = 0;
-    for (int i = 0;i < b - a; i++)
-        if (d(*(a + i)))
-            c[cnt++] = a[i];
-    return (c + cnt);
-}
-bool LargerThan2(int n)
-{
-    return n > 2;
-}
-bool LongerThan3(string s)
-{
-    return s.length() > 3;
-}
-
-string as1[5] = {"Tom","Mike","Jack","Ted","Lucy"};
-string as2[5];
-int  a1[5] = {1,2,3,4,5};
-int a2[5];
+private:
+    istream &is;
+    bool tmp;
+public:
+    MyCin():is(cin), tmp(true){}
+    friend MyCin &operator >> (MyCin &o, int &a)
+    {
+        o.is >> a;
+        if(a == -1) 
+            o.tmp = false;
+        return o;
+    }
+    operator bool() const { return tmp; }
+};
 int main()
 {
-    string * p = Filter(as1, as1 + 5, as2, LongerThan3);
-    for (int i = 0; i < p - as2; ++i)
-        cout << as2[i];
-    cout << endl;
-    int * p2 = Filter(a1, a1 + 5, a2, LargerThan2);
-    for (int i = 0; i < p2 - a2; ++i)
-        cout << a2[i] << ",";
-    system("pause");
+    MyCin m;
+    int n1, n2;
+    while (m >> n1 >> n2)
+        cout << n1 << " " << n2 << endl;
     return 0;
 }
