@@ -1,26 +1,17 @@
+#include <cstdio>
 #include <iostream>
+#include <algorithm>
+#include <list>
+#include <functional>
 using namespace std;
-class MyCin
-{
-private:
-    istream &is;
-    bool tmp;
-public:
-    MyCin():is(cin), tmp(true){}
-    friend MyCin &operator >> (MyCin &o, int &a)
-    {
-        o.is >> a;
-        if(a == -1) 
-            o.tmp = false;
-        return o;
-    }
-    operator bool() const { return tmp; }
-};
 int main()
 {
-    MyCin m;
-    int n1, n2;
-    while (m >> n1 >> n2)
-        cout << n1 << " " << n2 << endl;
+    double a[] = {1.2,3.4,9.8,7.3,2.6};
+    list<double> lst(a, a + 5);
+    lst.sort(greater<double>());
+
+    for (list<double>::iterator i = lst.begin(); i != lst.end(); ++i)
+        cout << *i << ",";
+    system("pause");
     return 0;
 }
