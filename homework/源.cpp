@@ -1,48 +1,53 @@
 #include <iostream>
-#include <cmath>
-#include <algorithm>
 #include <string>
 using namespace std;
-template <class T1, class T2>
-struct Closer
+
+
+template <class T>
+struct GoodCopy
 {
-    T1 a;
-    T2 b;
-    Closer(T1 _a, T2 _b):a(_a),b(_b){}
-    bool operator() (const T1 &tmp1, const T1 &tmp2) const 
-    { 
-        if (b(tmp1, a) < b(tmp2, a))
-            return true;
-        if (b(tmp1, a) == b(tmp2, a) && (tmp1 < tmp2))
-            return true;
-        else
-            return false;
+    void operator() (T *beg, T *end, T *copy_begin)
+    {
+        for (int i = end - beg - 1; i >= 0; i--)
+            copy_begin[i] = *(beg + i);
     }
 };
 
-int Distance1(int n1, int n2)
+int a[200];
+int b[200];
+string c[200];
+string d[200];
+
+template <class T>
+void Print(T s, T e)
 {
-    return abs(n1 - n2);
+    for (; s != e; ++s)
+        cout << *s << ",";
+    cout << endl;
 }
-int Distance2(const string & s1, const string & s2)
-{
-    return abs((int)s1.length() - (int)s2.length());
-}
-int a[10] = {0,3,1,4,7,9,20,8,10,15};
-string b[6] = {"American","Jack","To","Peking","abcdefghijklmnop","123456789"};
+
 int main()
 {
-    int n; string s;
-    while (cin >> n >> s)
+    int t;
+    cin >> t;
+    while (t--)
     {
-        sort(a, a + 10, Closer<int, int(*)(int, int)>(n, Distance1));
-        for (int i = 0; i < 10; ++i)
-            cout << a[i] << ",";
-        cout << endl;
-        sort(b, b + 6, Closer<string, int(*)(const string &, const string &)>(s, Distance2));
-        for (int i = 0; i < 6; ++i)
-            cout << b[i] << ",";
-        cout << endl;
+        int m;
+        cin >> m;
+        for (int i = 0; i < m; ++i)
+            cin >> a[i];
+        GoodCopy<int>()(a, a + m, b);
+        Print(b, b + m);
+        GoodCopy<int>()(a, a + m, a + m / 2);
+        Print(a + m / 2, a + m / 2 + m);
+
+        for (int i = 0; i < m; ++i)
+            cin >> c[i];
+        GoodCopy<string>()(c, c + m, d);
+        Print(c, c + m);
+        GoodCopy<string>()(c, c + m, c + m / 2);
+        Print(c + m / 2, c + m / 2 + m);
     }
+    system("pause");
     return 0;
 }
