@@ -5,27 +5,45 @@ using namespace std;
 template <class T>
 class CArray3D
 {
-private:
-    int a, b, c;
-    T ***p;
 public:
-    CArray3D(int _a, int _b, int _c)
+    class CArray2D
     {
-        a = _a;
-        b = _b;
-        c = _c;
-        p = new T **[_a + 1];
-        while (_a--)
+    public:
+        T * poi; 
+        int length, wide;
+        void create(int a, int b)
         {
-            p[_a] = new T*[_b + 1];
-            while (_b--)
-                p[_a][_b] = new T[_c + 1];
-            _b = b;
+            length = a; wide = b;
+            poi = new T[wide*length];
         }
-    }
-    T **operator[](int x)
+        ~CArray2D()
+        {
+            delete[] poi;
+        }
+        T* operator [](int k)
+        {
+            return poi + k*length;
+        }
+        operator void *()
+        {
+            return (void *)poi;
+        }
+    };
+    int length, wide, high;
+    CArray2D * poi;
+    CArray3D(int a, int b, int c):high(a), wide(b), length(c)
     {
-        return p[x];
+        poi = new CArray2D[high];
+        for (int i = 0; i < high; ++i)
+            (poi + i)->create(length, wide);
+    }
+    ~CArray3D()
+    {
+        delete[] poi;
+    }
+    CArray2D& operator [] (int k)
+    {
+        return *(poi + k);
     }
 };
 
@@ -74,10 +92,10 @@ int main()
         }
     }
     PrintA();
-    //memset(a[1], -1, 20 * sizeof(int));
-    //memset(a[1], -1, 20 * sizeof(int));
+    memset(a[1], -1, 20 * sizeof(int));
+    memset(a[1], -1, 20 * sizeof(int));
     PrintA();
-    //memset(a[1][1], 0, 5 * sizeof(int));
+    memset(a[1][1], 0, 5 * sizeof(int));
     PrintA();
 
     for (int i = 0; i < 3; ++i)
