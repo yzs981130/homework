@@ -1,23 +1,31 @@
 #include <iostream>
-#include <string>
+#include <vector>
 using namespace std;
 
 
-template <class T>
-struct GoodCopy
+struct A
 {
-    void operator() (T *beg, T *end, T *copy_begin)
+    int v;
+    A() {}
+    A(int n):v(n) {};
+    bool operator<(const A & a) const
     {
-        for (int i = end - beg - 1; i >= 0; i--)
-            copy_begin[i] = *(beg + i);
+        return v < a.v;
     }
 };
-
-int a[200];
-int b[200];
-string c[200];
-string d[200];
-
+template <class T>
+struct FilterClass
+{
+    T a, b;
+    FilterClass(T _a, T _b):a(_a), b(_b){}
+    bool operator() (T c)
+    {
+        if (a < c && c < b)
+            return true;
+        else
+            return false;
+    }
+};
 template <class T>
 void Print(T s, T e)
 {
@@ -25,28 +33,49 @@ void Print(T s, T e)
         cout << *s << ",";
     cout << endl;
 }
+template <class T1, class T2, class T3>
+T2 Filter(T1 s, T1 e, T2 s2, T3 op)
+{
+    for (; s != e; ++s)
+    {
+        if (op(*s))
+        {
+            *s2 = *s;
+            ++s2;
+        }
+    }
+    return s2;
+}
 
+ostream & operator <<(ostream & o, A & a)
+{
+    o << a.v;
+    return o;
+}
+vector<int> ia;
+vector<A> aa;
 int main()
 {
-    int t;
-    cin >> t;
-    while (t--)
+    int m, n;
+    while (cin >> m >> n)
     {
-        int m;
-        cin >> m;
-        for (int i = 0; i < m; ++i)
-            cin >> a[i];
-        GoodCopy<int>()(a, a + m, b);
-        Print(b, b + m);
-        GoodCopy<int>()(a, a + m, a + m / 2);
-        Print(a + m / 2, a + m / 2 + m);
+        ia.clear();
+        aa.clear();
+        int k, tmp;
+        cin >> k;
+        for (int i = 0; i < k; ++i)
+        {
+            cin >> tmp;
+            ia.push_back(tmp);
+            aa.push_back(tmp);
+        }
+        vector<int> ib(k);
+        vector<A> ab(k);
+        vector<int>::iterator p = Filter(ia.begin(), ia.end(), ib.begin(), FilterClass<int>(m, n));
+        Print(ib.begin(), p);
+        vector<A>::iterator pp = Filter(aa.begin(), aa.end(), ab.begin(), FilterClass<A>(m, n));
+        Print(ab.begin(), pp);
 
-        for (int i = 0; i < m; ++i)
-            cin >> c[i];
-        GoodCopy<string>()(c, c + m, d);
-        Print(c, c + m);
-        GoodCopy<string>()(c, c + m, c + m / 2);
-        Print(c + m / 2, c + m / 2 + m);
     }
     system("pause");
     return 0;
