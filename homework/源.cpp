@@ -1,82 +1,94 @@
 #include <iostream>
-#include <vector>
+#include <iomanip> 
+#include <cstring>
 using namespace std;
-
-
-struct A
-{
-    int v;
-    A() {}
-    A(int n):v(n) {};
-    bool operator<(const A & a) const
-    {
-        return v < a.v;
-    }
-};
 template <class T>
-struct FilterClass
+class CArray3D
 {
-    T a, b;
-    FilterClass(T _a, T _b):a(_a), b(_b){}
-    bool operator() (T c)
+private:
+    int a, b, c;
+    T ***p;
+public:
+    CArray3D(int _a, int _b, int _c)
     {
-        if (a < c && c < b)
-            return true;
-        else
-            return false;
-    }
-};
-template <class T>
-void Print(T s, T e)
-{
-    for (; s != e; ++s)
-        cout << *s << ",";
-    cout << endl;
-}
-template <class T1, class T2, class T3>
-T2 Filter(T1 s, T1 e, T2 s2, T3 op)
-{
-    for (; s != e; ++s)
-    {
-        if (op(*s))
+        a = _a;
+        b = _b;
+        c = _c;
+        p = new T **[_a + 1];
+        while (_a--)
         {
-            *s2 = *s;
-            ++s2;
+            p[_a] = new T*[_b + 1];
+            while (_b--)
+                p[_a][_b] = new T[_c + 1];
+            _b = b;
         }
     }
-    return s2;
+    T **operator[](int x)
+    {
+        return p[x];
+    }
+};
+
+CArray3D<int> a(3, 4, 5);
+CArray3D<double> b(3, 2, 2);
+void PrintA()
+{
+    for (int i = 0; i < 3; ++i)
+    {
+        cout << "layer " << i << ":" << endl;
+        for (int j = 0; j < 4; ++j)
+        {
+            for (int k = 0; k < 5; ++k)
+                cout << a[i][j][k] << ",";
+            cout << endl;
+        }
+    }
+}
+void PrintB()
+{
+    for (int i = 0; i < 3; ++i)
+    {
+        cout << "layer " << i << ":" << endl;
+        for (int j = 0; j < 2; ++j)
+        {
+            for (int k = 0; k < 2; ++k)
+                cout << b[i][j][k] << ",";
+            cout << endl;
+        }
+    }
 }
 
-ostream & operator <<(ostream & o, A & a)
-{
-    o << a.v;
-    return o;
-}
-vector<int> ia;
-vector<A> aa;
 int main()
 {
-    int m, n;
-    while (cin >> m >> n)
-    {
-        ia.clear();
-        aa.clear();
-        int k, tmp;
-        cin >> k;
-        for (int i = 0; i < k; ++i)
-        {
-            cin >> tmp;
-            ia.push_back(tmp);
-            aa.push_back(tmp);
-        }
-        vector<int> ib(k);
-        vector<A> ab(k);
-        vector<int>::iterator p = Filter(ia.begin(), ia.end(), ib.begin(), FilterClass<int>(m, n));
-        Print(ib.begin(), p);
-        vector<A>::iterator pp = Filter(aa.begin(), aa.end(), ab.begin(), FilterClass<A>(m, n));
-        Print(ab.begin(), pp);
 
+    int No = 0;
+    for (int i = 0; i < 3; ++i)
+    {
+        a[i];
+        for (int j = 0; j < 4; ++j)
+        {
+            a[j][i];
+            for (int k = 0; k < 5; ++k)
+                a[i][j][k] = No++;
+            a[j][i][i];
+        }
     }
+    PrintA();
+    //memset(a[1], -1, 20 * sizeof(int));
+    //memset(a[1], -1, 20 * sizeof(int));
+    PrintA();
+    //memset(a[1][1], 0, 5 * sizeof(int));
+    PrintA();
+
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 2; ++j)
+            for (int k = 0; k < 2; ++k)
+                b[i][j][k] = 10.0 / (i + j + k + 1);
+    PrintB();
+    int n = a[0][1][2];
+    double f = b[0][1][1];
+    cout << "****" << endl;
+    cout << n << "," << f << endl;
     system("pause");
     return 0;
 }
