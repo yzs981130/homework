@@ -2,40 +2,36 @@
 #include <list>
 #include <string>
 #include <vector>
+#include <set>
 using namespace std;
 int main()
 {
     long n;
     cin >> n;
-    int id1, id2;
-    list<int> v[10000];
+    int id1;
+    multiset<int> v;
+    multiset<int> a;
     while (n--)
     {
         string cmd;
         cin >> cmd >> id1;
         if (cmd == "add")
         {
-            cin >> id2;
-            v[id1].push_back(id2);
+            v.insert(id1);
+            a.insert(id1);
+            cout << v.count(id1) << endl;
         }
-        else if (cmd == "merge")
+        else if (cmd == "del")
         {
-            cin >> id2;
-            v[id1].merge(v[id2]);
+            cout << v.count(id1) << endl;
+            v.erase(id1);
         }
-        else if (cmd == "unique")
+        else if (cmd == "ask")
         {
-            v[id1].sort();
-            v[id1].unique();
-        }
-        else if (cmd == "out")
-        {
-            v[id1].sort();
-            for (list<int>::iterator i = v[id1].begin(); i != v[id1].end(); ++i)
-            {
-                cout << *i << ' ';
-            }
-            cout << endl;
+            if (a.find(id1) == a.end())
+                cout << 0 << ' ' << v.count(id1) << endl;
+            else
+                cout << 1 << ' ' << v.count(id1) << endl;
         }
     }
     system("pause");
