@@ -1,68 +1,96 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include <sstream>
-#include <cmath>
-#include <cstdio>
-#include <set>
+#include<iostream>
+#include<stdio.h>
+#include<queue>
+#include<iterator>
+#include<algorithm>
+#include<cmath>
 using namespace std;
-int main()
+bool CheckPrimer(int a)
 {
-    int n;
-    cin >> n;
-    set<pair<int, int> >people;
-    set<pair<int, int> >::iterator ptr;
-    set<pair<int, int> >::iterator left;
-    set<pair<int, int> >::iterator right;
-    people.insert(make_pair(1000000000, 1));
-    while (n--)
+    int q = sqrt(a);
+    for (int i = 2; i <= q; i++)
     {
-        int tmp_id, tmp_force;
-        int a, b;
-        scanf("%d %d", &tmp_id, &tmp_force);
-        people.insert(make_pair(tmp_force, tmp_id));
-        ptr = people.find(make_pair(tmp_force, tmp_id));
-        right = people.end();
-        --right;
-        if (ptr == people.begin())
+        if (a % i == 0)
+            return false;
+    }
+    return true;
+}
+int ct(int a)
+{
+    int sum = 0, k;
+    for (int i = 2; i <= sqrt(a); i++)
+    {
+        if (a % i == 0)
         {
-            right = ptr;
-            ++right;
-            printf("%d %d\n", tmp_id, right->second);
-            if (tmp_force == right->first)
-                people.erase(right);
-        }
-        else if (ptr == right)
-        {
-            left = ptr;
-            --left;
-            printf("%d %d\n", tmp_id, left->second);
-            if (tmp_force == left->first)
-                people.erase(left);
-        }
-        else
-        {
-            left = right = ptr;
-            --left;
-            ++right;
-            if ((tmp_force - left->first) < (right->first - tmp_force))
-                printf("%d %d\n", tmp_id, left->second);
-            else if ((tmp_force - left->first) > (right->first - tmp_force))
-                printf("%d %d\n", tmp_id, right->second);
-            else
-            {
-                if (left->second < right->second)
-                    printf("%d %d\n", tmp_id, left->second);
-                else
-                    printf("%d %d\n", tmp_id, right->second);
-            }
-            if (tmp_force == right->first)
-                people.erase(right);
-            if (tmp_force == left->first)
-                people.erase(ptr);
+            k = a / i;
+            if (i != k && CheckPrimer(k))
+                sum++;
+            if (CheckPrimer(i))
+                sum++;
         }
     }
+    return sum;
+}
+class cmp1
+{
+public:
+    bool operator() (int a, int b)
+    {
+        int p = ct(a);
+        int q = ct(b);
+        if (p < q)
+            return true;
+        else if (p == q)
+        {
+            if (a < b)
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+};
+class cmp2
+{
+public:
+    bool operator() (int a, int b)
+    {
+        int p = ct(a);
+        int q = ct(b);
+        if (p < q)
+            return false;
+        else if (p == q)
+        {
+            if (a < b)
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    }
+};
+int main()
+{
+    int num;
+    cin >> num;
+    int n;
+    priority_queue<int, vector<int>, cmp1> pq1;
+    priority_queue<int, vector<int>, cmp2> pq2;
+    for (int i = 0; i < num; i++)
+    {
+        for (int j = 0; j < 10; j++)
+        {
+            cin >> n;
+            pq1.push(n);
+            pq2.push(n);
+        }
+        cout << pq1.top() << " ";
+        pq1.pop();
+        cout << pq2.top() << endl;
+        pq2.pop();
+    }
+    system("pause");
     return 0;
 }
