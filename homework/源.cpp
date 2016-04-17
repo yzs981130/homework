@@ -1,36 +1,68 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 #include <sstream>
+#include <cmath>
+#include <cstdio>
+#include <set>
 using namespace std;
 int main()
 {
-    std::ios::sync_with_stdio(false);
     int n;
     cin >> n;
-    map<int, int>people;
-    map<int, int>::iterator p;
-    map<int, int>::iterator q;
-    people.insert(map<int, int>::value_type(1000000000, 1));
+    set<pair<int, int> >people;
+    set<pair<int, int> >::iterator ptr;
+    set<pair<int, int> >::iterator left;
+    set<pair<int, int> >::iterator right;
+    people.insert(make_pair(1000000000, 1));
     while (n--)
     {
         int tmp_id, tmp_force;
-        cin >> tmp_id >> tmp_force;
-        people.insert(map<int, int>::value_type(tmp_force, tmp_id));
-        p = people.lower_bound(tmp_force);
-        q = people.upper_bound(tmp_force);
-        if (p != people.begin())
+        int a, b;
+        scanf("%d %d", &tmp_id, &tmp_force);
+        people.insert(make_pair(tmp_force, tmp_id));
+        ptr = people.find(make_pair(tmp_force, tmp_id));
+        right = people.end();
+        --right;
+        if (ptr == people.begin())
         {
-            --p;
-            if ((tmp_force - p->first) <= (q->first - tmp_force))
-                cout << tmp_id << ' ' << p->second << endl;
-            else
-                cout << tmp_id << ' ' << q->second << endl;
+            right = ptr;
+            ++right;
+            printf("%d %d\n", tmp_id, right->second);
+            if (tmp_force == right->first)
+                people.erase(right);
+        }
+        else if (ptr == right)
+        {
+            left = ptr;
+            --left;
+            printf("%d %d\n", tmp_id, left->second);
+            if (tmp_force == left->first)
+                people.erase(left);
         }
         else
-            cout << tmp_id << ' ' << q->second << endl;
+        {
+            left = right = ptr;
+            --left;
+            ++right;
+            if ((tmp_force - left->first) < (right->first - tmp_force))
+                printf("%d %d\n", tmp_id, left->second);
+            else if ((tmp_force - left->first) > (right->first - tmp_force))
+                printf("%d %d\n", tmp_id, right->second);
+            else
+            {
+                if (left->second < right->second)
+                    printf("%d %d\n", tmp_id, left->second);
+                else
+                    printf("%d %d\n", tmp_id, right->second);
+            }
+            if (tmp_force == right->first)
+                people.erase(right);
+            if (tmp_force == left->first)
+                people.erase(ptr);
+        }
     }
-    system("pause");
     return 0;
 }
