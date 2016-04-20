@@ -1,93 +1,95 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+#include <cstdio>
 #include <string>
-#include <map>
-#include <iterator>
-#include <algorithm>
-#include <functional>
+#include <stack>
+#include <set>
+#include <sstream>
+#include <cmath>
 using namespace std;
-template<class Key, class T, class Pred = greater<Key> >
-class MyMultimap:public multimap<Key, T, Pred>
+double num[2];
+stack<double> c;
+multiset<double> m;
+void cal_num()
 {
-public:
-    void Set(Key p, T q)
-    {
-        for (typename multimap<Key, T, Pred>::iterator i = this->find(p); i != this->end() && i->first == p; ++i)
-            i->second = q;
-    }
-};
-template<class T1, class T2>
-ostream &operator << (ostream &o, pair<T1, T2>&p)
-{
-    o << '(' << p.first << ',' << p.second << ')';
-    return o;
+    num[1] = c.top();
+    c.pop();
+    num[0] = c.top();
+    c.pop();
 }
-struct Student
+void print()
 {
-    string name;
-    int score;
-};
-template <class T>
-void Print(T first, T last)
+    multiset<double>::iterator p = m.begin();
+    int cnt = 0;
+    for (; p != m.end(); ++p)
+    {
+        printf("%le ", *p);
+        cnt++;
+        if (cnt % 10 == 0)
+            printf("\n");
+    }
+}
+double my_stod(string s)
 {
-    for (; first != last; ++first)
-        cout << *first << ",";
-    cout << endl;
+    stringstream ss;
+    double n;
+    ss << s;
+    ss >> n;
+    return n;
 }
 int main()
 {
-
-    Student s[] = {{"Tom",80},{"Jack",70},
-    {"Jone",90},{"Tom",70},{"Alice",100}};
-
-    MyMultimap<string, int> mp;
-    for (int i = 0; i < 5; ++i)
-        mp.insert(make_pair(s[i].name, s[i].score));
-    Print(mp.begin(), mp.end()); //按姓名从大到小输出
-
-    mp.Set("Tom", 78); //把所有名为"Tom"的学生的成绩都设置为78
-    Print(mp.begin(), mp.end());
-
-
-
-    MyMultimap<int, string, less<int> > mp2;
-    for (int i = 0; i < 5; ++i)
-        mp2.insert(make_pair(s[i].score, s[i].name));
-
-    Print(mp2.begin(), mp2.end()); //按成绩从小到大输出
-    mp2.Set(70, "Error");          //把所有成绩为70的学生，名字都改为"Error"
-    Print(mp2.begin(), mp2.end());
-    cout << "******" << endl;
-
-    mp.clear();
-
-    string name;
-    string cmd;
-    int score;
-    while (cin >> cmd)
+    int n;
+    cin >> n;
+    double ini;
+    for (int i = 0; i < n; i++)
     {
-        if (cmd == "A")
+        scanf("%le", &ini);
+        m.insert(ini);
+    }
+    string tmp;
+    while (cin >> tmp)
+    {
+        if (tmp == "+")
         {
-            cin >> name >> score;
-            if (mp.find(name) != mp.end())
-            {
-                cout << "erroe" << endl;
-            }
-            mp.insert(make_pair(name, score));
+            cal_num();
+            c.push((num[0] + num[1]));
         }
-        else if (cmd == "Q")
+        else if (tmp == "-")
         {
-            cin >> name;
-            MyMultimap<string, int>::iterator p = mp.find(name);
-            if (p != mp.end())
-            {
-                cout << p->second << endl;
-            }
-            else
-            {
-                cout << "Not Found" << endl;
-            }
+            cal_num();
+            c.push((num[0] - num[1]));
+        }
+        else if (tmp == "*")
+        {
+            cal_num();
+            c.push((num[0] * num[1]));
+        }
+        else if (tmp == "/")
+        {
+            cal_num();
+            c.push((num[0] / num[1]));
+        }
+        else if (tmp == "^")
+        {
+            cal_num();
+            c.push(pow(num[0], num[1]));
+        }
+        else if (tmp == "=")
+        {
+            printf("%le\n", c.top());
+            m.erase(m.begin());
+            m.insert(c.top());
+            c.pop();
+        }
+        else
+        {
+            ini = my_stod(tmp);
+            c.push(ini);
         }
     }
+    printf("\n");
+    print();
     system("pause");
     return 0;
 }
