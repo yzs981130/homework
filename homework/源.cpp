@@ -1,95 +1,42 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+#include <iomanip>
 #include <cstdio>
-#include <string>
-#include <stack>
-#include <set>
-#include <sstream>
 #include <cmath>
+const double eps = pow(10, -7);
 using namespace std;
-double num[2];
-stack<double> c;
-multiset<double> m;
-void cal_num()
-{
-    num[1] = c.top();
-    c.pop();
-    num[0] = c.top();
-    c.pop();
-}
-void print()
-{
-    multiset<double>::iterator p = m.begin();
-    int cnt = 0;
-    for (; p != m.end(); ++p)
-    {
-        printf("%le ", *p);
-        cnt++;
-        if (cnt % 10 == 0)
-            printf("\n");
-    }
-}
-double my_stod(string s)
-{
-    stringstream ss;
-    double n;
-    ss << s;
-    ss >> n;
-    return n;
-}
 int main()
 {
-    int n;
-    cin >> n;
-    double ini;
-    for (int i = 0; i < n; i++)
+    double a, b, c;
+    cin >> a >> b >> c;
+    double d = b * b - 4 * a * c;
+    if (fabs(d) < eps)
     {
-        scanf("%le", &ini);
-        m.insert(ini);
+        double x1 = -b / (2 * a);
+        if (fabs(x1) < eps)
+            x1 = 0.0;
+        cout << fixed << setprecision(5) << "x1=x2=" << x1 << endl;
+        
     }
-    string tmp;
-    while (cin >> tmp)
+    else if (d > eps)
     {
-        if (tmp == "+")
-        {
-            cal_num();
-            c.push((num[0] + num[1]));
-        }
-        else if (tmp == "-")
-        {
-            cal_num();
-            c.push((num[0] - num[1]));
-        }
-        else if (tmp == "*")
-        {
-            cal_num();
-            c.push((num[0] * num[1]));
-        }
-        else if (tmp == "/")
-        {
-            cal_num();
-            c.push((num[0] / num[1]));
-        }
-        else if (tmp == "^")
-        {
-            cal_num();
-            c.push(pow(num[0], num[1]));
-        }
-        else if (tmp == "=")
-        {
-            printf("%le\n", c.top());
-            m.erase(m.begin());
-            m.insert(c.top());
-            c.pop();
-        }
-        else
-        {
-            ini = my_stod(tmp);
-            c.push(ini);
-        }
+        double x1 = (-b + sqrt(d)) / (2 * a), x2 = (-b - sqrt(d)) / (2 * a);
+        if (fabs(x1) < eps)
+            x1 = 0.0;
+        if (fabs(x2) < eps)
+            x2 = 0.0;
+        cout << fixed << setprecision(5) << "x1=" << x1 << ";x2=" << x2 << endl;
     }
-    printf("\n");
-    print();
+    else if (d < -eps)
+    {
+        double x1 = -b / (2 * a);
+        if (fabs(x1) < eps)
+            x1 = 0.0;
+        double y = sqrt(-d) / (2 * a);
+        if (fabs(y) < eps)
+            y = 0.0;
+        cout << fixed << setprecision(5) << "x1=" << x1 << '+' << sqrt(-d) / (2 * a) << "i;x2=" << x1 << '-' << sqrt(-d) / (2 * a) << 'i' << endl;
+    }
     system("pause");
     return 0;
 }
