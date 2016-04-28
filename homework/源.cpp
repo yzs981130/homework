@@ -3,39 +3,92 @@
 #include <iomanip>
 #include <cstdio>
 #include <cmath>
-const double eps = pow(10, -7);
+#include <string>
+#include <sstream>
+#include <cctype>
 using namespace std;
+string tmp_num, tmp_dir;
+int my_stoi(string str)
+{
+    stringstream ss;
+    ss << str;
+    int n;
+    ss >> n;
+    return n;
+}
+void cal_str(string str)
+{
+    int pos;
+    for(int i = 0; i < str.length(); i++)
+        if(!isdigit(str[i]))
+        {
+            pos = i;
+            break;
+        }
+    tmp_num = str.substr(0, pos);
+    tmp_dir = str.substr(pos, str.length() - 1);
+}
 int main()
 {
-    double a, b, c;
-    cin >> a >> b >> c;
-    double d = b * b - 4 * a * c;
-    if (fabs(d) < eps)
+    string input;
+    int cnt = 1;
+    string cmd[1000];
+    while (cin >> input && input != "END")
     {
-        double x1 = -b / (2 * a);
-        if (fabs(x1) < eps)
-            x1 = 0.0;
-        cout << fixed << setprecision(5) << "x1=x2=" << x1 << endl;
-        
-    }
-    else if (d > eps)
-    {
-        double x1 = (-b + sqrt(d)) / (2 * a), x2 = (-b - sqrt(d)) / (2 * a);
-        if (fabs(x1) < eps)
-            x1 = 0.0;
-        if (fabs(x2) < eps)
-            x2 = 0.0;
-        cout << fixed << setprecision(5) << "x1=" << x1 << ";x2=" << x2 << endl;
-    }
-    else if (d < -eps)
-    {
-        double x1 = -b / (2 * a);
-        if (fabs(x1) < eps)
-            x1 = 0.0;
-        double y = sqrt(-d) / (2 * a);
-        if (fabs(y) < eps)
-            y = 0.0;
-        cout << fixed << setprecision(5) << "x1=" << x1 << '+' << sqrt(-d) / (2 * a) << "i;x2=" << x1 << '-' << sqrt(-d) / (2 * a) << 'i' << endl;
+        int n = 1;
+        double x = 0, y = 0;
+        while (input.find(',') != string::npos)
+        {
+            int i = input.find(',');
+            input[i] = ' ';
+            n++;
+        }
+        input[input.length() - 1] = ' ';
+        stringstream ss;
+        ss.str(input);
+        for (int i = 0; i < n; i++)
+            ss >> cmd[i];
+        cout << "Map #" << cnt << endl;
+        for (int i = 0; i < n; i++)
+        {
+            cal_str(cmd[i]);
+            int dis = my_stoi(tmp_num);
+            if (tmp_dir == "N")
+                y += dis;
+            else if (tmp_dir == "E")
+                x += dis;
+            else if (tmp_dir == "S")
+                y -= dis;
+            else if (tmp_dir == "W")
+                x -= dis;
+            else if (tmp_dir == "NW")
+            {
+                double tmp = dis / sqrt(2.0);
+                x -= tmp;
+                y += tmp;
+            }
+            else if (tmp_dir == "NE")
+            {
+                double tmp = dis / sqrt(2.0);
+                x += tmp;
+                y += tmp;
+            }
+            else if (tmp_dir == "SE")
+            {
+                double tmp = dis / sqrt(2.0);
+                x += tmp;
+                y -= tmp;
+            }
+            else if (tmp_dir == "SW")
+            {
+                double tmp = dis / sqrt(2.0);
+                x -= tmp;
+                y -= tmp;
+            }
+        }
+        cout << fixed << setprecision(3) << "The treasure is located at (" << x << ',' << y << ")." << endl;
+        cout << fixed << setprecision(3) << "The distance to the treasure is " << sqrt(x*x + y*y) << '.' << endl << endl;
+        cnt++;
     }
     system("pause");
     return 0;
