@@ -1,26 +1,23 @@
 #include <iostream>
 using namespace std;
-template <class T>
-int sum(int *a, int n, T op)
+class CType
 {
-    int tmp = 0;
-    for (int i = 0; i < n; i++)
-        tmp += op(a[i]);
-    return tmp;
-}
-int sqr(int n)
+public:
+    int n;
+    void setvalue(int _n) { n = _n; }
+    int operator ++(int tmp) { return n; }
+    friend ostream &operator << (ostream &s, const CType &c) { s << c.n * c.n; return s; }
+};
+int main(int argc, char* argv[])
 {
-    return n * n;
-}
-int main()
-{
-    int t, n, a[0x100];
-    cin >> t;
-    for (int c = 0; c < t; ++c)
+    CType obj;
+    int   n;
+    cin >> n;
+    while (n)
     {
+        obj.setvalue(n);
+        cout << obj++ << " " << obj << endl;
         cin >> n;
-        for (int i = 0; i < n; ++i) cin >> a[i];
-        cout << sum(a, n, sqr) << endl;
     }
     system("pause");
     return 0;
