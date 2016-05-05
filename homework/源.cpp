@@ -1,24 +1,27 @@
 #include <iostream>
 using namespace std;
-class Number
+template <class T>
+int sum(int *a, int n, T op)
 {
-public:
-    int num;
-    Number(int n): num(n)
-    {}
-    int& value() { return num; }
-    void operator +(Number b) { num = num += b.num; }
-};
+    int tmp = 0;
+    for (int i = 0; i < n; i++)
+        tmp += op(a[i]);
+    return tmp;
+}
+int sqr(int n)
+{
+    return n * n;
+}
 int main()
 {
-    Number a(2);
-    Number b = a;
-    cout << a.value() << endl;
-    cout << b.value() << endl;
-    a.value() = 8;
-    cout << a.value() << endl;
-    a + b;
-    cout << a.value() << endl;
+    int t, n, a[0x100];
+    cin >> t;
+    for (int c = 0; c < t; ++c)
+    {
+        cin >> n;
+        for (int i = 0; i < n; ++i) cin >> a[i];
+        cout << sum(a, n, sqr) << endl;
+    }
     system("pause");
     return 0;
 }
