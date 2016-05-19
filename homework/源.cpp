@@ -2,63 +2,36 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <algorithm>
 #include <memory>
 #include <cmath>
 using namespace std;
-int CClock[10];
-int tmp_clock[10];
-int Move[10][5] = {{0}, { 1, 2, 4, 5 }, {1, 2, 3}, {2, 3, 5, 6}, {1, 4, 7}, {2, 4, 5, 6, 8}, {3, 6, 9}, {4, 5, 7, 8}, {7, 8, 9}, {5, 6, 8, 9}};
-void flip(int n)
+int cal(string s1, string s2)
 {
-    for (int i = 0; i < 5; i++)
-        tmp_clock[Move[n][i]]++;
-}
-bool check_clock()
-{
-    for (int i = 1; i < 10; i++)
-        if (tmp_clock[i] % 4 != 0)
-            return false;
-    return true;
+    int cnt = 0;
+    for (int i = 0; i < min(s1.length(), s2.length()); i++)
+    {
+        if (s1[i] == s2[i])
+            cnt++;
+        else
+            break;
+    }
+    return cnt;
 }
 int main()
 {
-    for (int i = 1; i < 10; i++)
-        cin >> CClock[i];
-    int tmp_ans[10], tmp_min = 10000, ans[10];
-    memcpy(tmp_clock, CClock, sizeof(CClock));
-    int a[10] = {0};
-    for(a[0] = 0; a[0] < 4; a[0]++)
-        for (a[1] = 0; a[1] < 4; a[1]++)
-            for (a[2] = 0; a[2] < 4; a[2]++)
-                for (a[3] = 0; a[3] < 4; a[3]++)
-                    for (a[4] = 0; a[4] < 4; a[4]++)
-                        for (a[5] = 0; a[5] < 4; a[5]++)
-                            for (a[6] = 0; a[6] < 4; a[6]++)
-                                for (a[7] = 0; a[7] < 4; a[7]++)
-                                    for (a[8] = 0; a[8] < 4; a[8]++)
-                                    {
-                                        int tmp_sum = 0;
-                                        for (int i = 0; i < 9; i++)
-                                        {
-                                            for (int j = 0; j < a[i]; j++)
-                                                flip(i + 1);
-                                            tmp_sum += a[i];
-                                        }
-                                        if (check_clock())
-                                        {
-                                            if (tmp_sum < tmp_min)
-                                            {
-                                                memcpy(tmp_ans, a, sizeof(a));
-                                                tmp_min = tmp_sum;
-                                            }
-                                        }
-                                        memcpy(tmp_clock, CClock, sizeof(CClock));
-                                    }
-    for (int i = 0; i < 9; i++)
-        if (tmp_ans[i] != 0)
-            for (int j = 0; j < tmp_ans[i]; j++)
-                cout << i + 1 << ' ';
-    cout << endl;
+    int n;
+    cin >> n;
+    string str[10002];
+    for (int i = 0; i < n; i++)
+        cin >> str[i];
+    string s = str[0];
+    for (int i = 1; i < n; i++)
+    {
+        s += char(cal(str[i], str[i - 1]) + '0');
+        s += str[i].substr(cal(str[i], str[i - 1]), str[i].length());
+    }
+    cout << s.length() << endl;
     system("pause");
     return 0;
 }
