@@ -1,39 +1,39 @@
 #include <iostream>
+#include <cstdio>
+#include <memory.h>
+#include <cstring>
+#define N 2050
 using namespace std;
-const int MAX = 102;
-int Map[MAX][MAX];
-int dp[MAX][MAX];
-int r, c;
-int max(int x, int y, int z, int k)
+int n;
+char s[N / 2][N];
+void cal(int x, int y, int d)
 {
-    if (x < y)x = y;
-    if (x < z)x = z;
-    if (x < k)x = k;
-    return x;
-}
-int dfs(int i, int j, int height)
-{
-    if (Map[i][j] == -1 || height <= Map[i][j])return 0;
-    if (dp[i][j] >= 0)return dp[i][j];
-    dp[i][j] = max(dfs(i + 1, j, Map[i][j]), dfs(i - 1, j, Map[i][j]), dfs(i, j + 1, Map[i][j]), dfs(i, j - 1, Map[i][j])) + 1;
-    return dp[i][j];
+    int offset = 1 << (d - 1);
+    if (d == 1)
+    {
+        s[x][y] = s[x + 1][y - 1] = '/';
+        s[x][y + 1] = s[x + 1][y + 2] = '\\';
+        s[x + 1][y] = s[x + 1][y + 1] = '_';
+        return;
+    }
+    cal(x, y, d - 1);
+    cal(x + offset, y - offset, d - 1);
+    cal(x + offset, y + offset, d - 1);
 }
 int main()
 {
-    cin >> r >> c;
-    memset(Map, -1, sizeof(Map));
-    for (int i = 1; i <= r; i++)
-        for (int j = 1; j <= c; j++)
-            cin >> Map[i][j];
-    memset(dp, -1, sizeof(dp));
-    int t_max = -1;
-    for (int i = 1; i <= r; i++)
-        for (int j = 1; j <= c; j++)
+    while (cin >> n && n != 0)
+    {
+        memset(s, ' ', sizeof(s));
+        cal(1, (1 << n), n);
+        int k = (1 << n) + 1;
+        for (int i = 1; i <= (1 << n); i++, k++)
         {
-            int t = dfs(i, j, Map[i][j] + 1);
-            if (t > t_max) t_max = t;
+            for (int j = 1; j <= k; j++)
+                putchar(s[i][j]);
+            printf("\n");
         }
-    cout << t_max << endl;
-    system("pause");
+        printf("\n");
+    }
     return 0;
 }
