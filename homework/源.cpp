@@ -5,33 +5,57 @@
 #include <algorithm>
 #include <memory>
 #include <cmath>
+#include <queue>
+#include <functional>
 using namespace std;
-int cal(string s1, string s2)
+priority_queue <string, vector<string>, greater<string> >q[1000];
+void IO(int &n, int &cnt, bool &flag)
 {
-    int cnt = 0;
-    for (int i = 0; i < min(s1.length(), s2.length()); i++)
+    string str;
+    cin >> str;
+    if (flag && str != "#")
     {
-        if (s1[i] == s2[i])
-            cnt++;
-        else
-            break;
+        cout << "DATA SET " << cnt << ":\nROOT\n";
+        flag = false;
     }
-    return cnt;
+    if (str[0] == 'd')
+    {
+        n++;
+        for (int i = 0; i < n; i++)
+            cout << "|     ";
+        cout << str << endl;
+    }
+
+    else if (str[0] == 'f')
+    {
+        q[n].push(str);
+    }
+    else if (str == "]" || str == "*")
+    {
+        while (!q[n].empty())
+        {
+            for (int i = 0; i < n; i++)
+                cout << "|     ";
+            cout << q[n].top() << endl;
+            q[n].pop();
+        }
+        n--;
+    }
+    if (str == "*")
+    {
+        cnt++;
+        n = 0;
+        flag = true;
+        cout << endl;
+    }
+    if (str != "#")
+        IO(n, cnt, flag);
 }
 int main()
 {
-    int n;
-    cin >> n;
-    string str[10002];
-    for (int i = 0; i < n; i++)
-        cin >> str[i];
-    string s = str[0];
-    for (int i = 1; i < n; i++)
-    {
-        s += char(cal(str[i], str[i - 1]) + '0');
-        s += str[i].substr(cal(str[i], str[i - 1]), str[i].length());
-    }
-    cout << s.length() << endl;
+    int i = 0, cnt = 1;
+    bool flag = true;
+    IO(i, cnt, flag);
     system("pause");
     return 0;
 }
