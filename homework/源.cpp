@@ -1,61 +1,39 @@
-#include <memory>
-#include <string>
-#include <cstring>
 #include <iostream>
-#include <algorithm>
-#include <memory>
-#include <cmath>
-#include <queue>
-#include <functional>
 using namespace std;
-priority_queue <string, vector<string>, greater<string> >q[1000];
-void IO(int &n, int &cnt, bool &flag)
+const int MAX = 102;
+int Map[MAX][MAX];
+int dp[MAX][MAX];
+int r, c;
+int max(int x, int y, int z, int k)
 {
-    string str;
-    cin >> str;
-    if (flag && str != "#")
-    {
-        cout << "DATA SET " << cnt << ":\nROOT\n";
-        flag = false;
-    }
-    if (str[0] == 'd')
-    {
-        n++;
-        for (int i = 0; i < n; i++)
-            cout << "|     ";
-        cout << str << endl;
-    }
-
-    else if (str[0] == 'f')
-    {
-        q[n].push(str);
-    }
-    else if (str == "]" || str == "*")
-    {
-        while (!q[n].empty())
-        {
-            for (int i = 0; i < n; i++)
-                cout << "|     ";
-            cout << q[n].top() << endl;
-            q[n].pop();
-        }
-        n--;
-    }
-    if (str == "*")
-    {
-        cnt++;
-        n = 0;
-        flag = true;
-        cout << endl;
-    }
-    if (str != "#")
-        IO(n, cnt, flag);
+    if (x < y)x = y;
+    if (x < z)x = z;
+    if (x < k)x = k;
+    return x;
+}
+int dfs(int i, int j, int height)
+{
+    if (Map[i][j] == -1 || height <= Map[i][j])return 0;
+    if (dp[i][j] >= 0)return dp[i][j];
+    dp[i][j] = max(dfs(i + 1, j, Map[i][j]), dfs(i - 1, j, Map[i][j]), dfs(i, j + 1, Map[i][j]), dfs(i, j - 1, Map[i][j])) + 1;
+    return dp[i][j];
 }
 int main()
 {
-    int i = 0, cnt = 1;
-    bool flag = true;
-    IO(i, cnt, flag);
+    cin >> r >> c;
+    memset(Map, -1, sizeof(Map));
+    for (int i = 1; i <= r; i++)
+        for (int j = 1; j <= c; j++)
+            cin >> Map[i][j];
+    memset(dp, -1, sizeof(dp));
+    int t_max = -1;
+    for (int i = 1; i <= r; i++)
+        for (int j = 1; j <= c; j++)
+        {
+            int t = dfs(i, j, Map[i][j] + 1);
+            if (t > t_max) t_max = t;
+        }
+    cout << t_max << endl;
     system("pause");
     return 0;
 }
