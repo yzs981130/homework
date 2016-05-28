@@ -3,47 +3,41 @@
 #include<cstdio>
 #include<stdlib.h>
 #include<string.h>
-#define QUOTIETY 4
+#define MAX 10
+char m[MAX][MAX];
+int n, k;
+int cnt;
+bool vis[MAX];
 using namespace std;
-int cnt = 1;
-void multiply(const int index, int *result)
+void dfs(int row, int num)
 {
-    int product = 0;
-    int carry = 0;
-    int remainder = 0;
-    int i = 0;
-    for (i = 0; i < cnt; ++i)
+    if (num == k)
     {
-        product = result[i] * index + carry;
-        carry = product / 10;
-        remainder = product % 10;
-        result[i] = remainder;
+        cnt++;
+        return;
     }
-    if (carry != 0)
-    {
-        while (carry / 10 != 0)
-        {
-            result[cnt] = carry % 10;
-            carry /= 10;
-            ++cnt;
-        }
-        result[cnt++] = carry;
-    }
+    for(int i = row; i < n; i++)
+        for(int j = 0; j < n; j++)
+            if (m[i][j] == '#' && !vis[j])
+            {
+                vis[j] = true;
+                dfs(i + 1, num + 1);
+                vis[j] = false;
+            }
 }
 int main()
 {
-    int index = 0;
-    int input = 0;
-    int *result = NULL;
-    scanf("%d", &input);
-    result = new int [sizeof(int) * input * QUOTIETY];
-    memset(result, 0, sizeof(int) * input * QUOTIETY);
-    result[0] = 1;
-    for (index = 1; index <= input; ++index)
-        multiply(index, result);
-    for (index = cnt - 1; index >= 0L; --index)
-        printf("%d", result[index]);
-    delete []result;
+    while (cin >> n >> k && (n != -1))
+    {
+        cnt = 0;
+        memset(vis, 0, sizeof(vis));
+        memset(m, 0, sizeof(m));
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                cin >> m[i][j];
+        dfs(0, 0);
+        cout << cnt << endl;
+    }
     system("pause");
     return 0;
 }
