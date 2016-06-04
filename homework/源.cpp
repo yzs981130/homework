@@ -1,29 +1,50 @@
 #include <iostream>
 using namespace std;
-#define MAX 102
-int final[MAX], cnt_a, cnt_b;
-int a[MAX], b[MAX];
-int main()
-{    
-    int n, na, nb;
-    cin >> n >> na >> nb;
-    for (int i = 0; i < na; i++)
-        cin >> a[i];
-    for (int i = 0; i < nb; i++)
-        cin >> b[i];
-    for (int i = 0; i < n; i++)
+int n, k;
+int ans;
+char m[9][9];
+bool vis[9][9];
+bool canPut(int x, int y)
+{
+    for (int i = 0; i < n; ++i)
     {
-        if ((a[i%na] == 5 && b[i%nb] == 0) || (a[i%na] == 0 && b[i%nb] == 2) || (a[i%na] == 2 && b[i%nb] == 5))
-            cnt_a++;
-        if ((a[i%na] == 0 && b[i%nb] == 5) || (a[i%na] == 2 && b[i%nb] == 0) || (a[i%na] == 5 && b[i%nb] == 2))
-            cnt_b++;
+        if (m[x][i] == '#' && vis[x][i]) 
+            return false;
+        if (m[i][y] == '#' && vis[i][y]) 
+            return false;
     }
-    if (cnt_a > cnt_b)
-        cout << 'A' << endl;
-    else if (cnt_a < cnt_b)
-        cout << 'B' << endl;
-    else
-        cout << "draw" << endl;
+    return true;
+}
+void dfs(int row, int cnt_left)
+{
+    if (cnt_left == 0)
+    {
+        ans++;
+        return;
+    }
+    for(int i = row; i < n; i++)
+        for (int j = 0; j < n; j++)
+        {
+            if (m[i][j] == '#' && !vis[i][j] && canPut(i, j))
+            {
+                vis[i][j] = true;
+                dfs(i + 1, cnt_left - 1);
+                vis[i][j] = false;
+            }
+        }
+}
+int main()
+{
+    while (cin >> n >> k && (n != -1))
+    {
+        ans = 0;
+        memset(vis, 0, sizeof(vis));
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                cin >> m[i][j];
+        dfs(0, k);
+        cout << ans << endl;
+    }
     system("pause");
     return 0;
 }
