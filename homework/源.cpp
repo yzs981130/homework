@@ -1,50 +1,63 @@
 #include <iostream>
+#include <queue>
+#include <cstring>
 using namespace std;
-int n, k;
-int ans;
-char m[9][9];
-bool vis[9][9];
-bool canPut(int x, int y)
+#define MAX 1000001
+int s, t, step[MAX];
+bool vis[MAX];
+int bfs(int s, int t)
 {
-    for (int i = 0; i < n; ++i)
+    queue<int>q;
+    q.push(s);
+    vis[s] = true;
+    while (!q.empty())
     {
-        if (m[x][i] == '#' && vis[x][i]) 
-            return false;
-        if (m[i][y] == '#' && vis[i][y]) 
-            return false;
-    }
-    return true;
-}
-void dfs(int row, int cnt_left)
-{
-    if (cnt_left == 0)
-    {
-        ans++;
-        return;
-    }
-    for(int i = row; i < n; i++)
-        for (int j = 0; j < n; j++)
+        int head = q.front();
+        q.pop();
+        vis[head] = true;
+        if (head == t)
+            break;
+        if (head - 1 >= 0 && !vis[head - 1])
         {
-            if (m[i][j] == '#' && !vis[i][j] && canPut(i, j))
-            {
-                vis[i][j] = true;
-                dfs(i + 1, cnt_left - 1);
-                vis[i][j] = false;
-            }
+            vis[head - 1] = true;
+            q.push(head - 1);
+            step[head - 1] = step[head] + 1;
         }
+        if (head + 1 < MAX && !vis[head + 1])
+        {
+            vis[head + 1] = true;
+            q.push(head + 1);
+            step[head + 1] = step[head] + 1;
+        }
+        if (2 * head < MAX && !vis[2 * head])
+        {
+            vis[2 * head] = true;
+            q.push(2 * head);
+            step[2 * head] = step[head] + 1;
+        }
+        if (head % 2 == 0 && !vis[head / 2])
+        {
+            vis[head / 2] = true;
+            q.push(head / 2);
+            step[head / 2] = step[head] + 1;
+        }
+    }
+    return step[t];
 }
 int main()
 {
-    while (cin >> n >> k && (n != -1))
+    int n;
+    cin >> n;
+    while (n--)
     {
-        ans = 0;
+        cin >> s >> t;
         memset(vis, 0, sizeof(vis));
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                cin >> m[i][j];
-        dfs(0, k);
-        cout << ans << endl;
+        memset(step, 0, sizeof(step));
+        int a = bfs(s, t);
+        memset(vis, 0, sizeof(vis));
+        memset(step, 0, sizeof(step));
+        int b = bfs(t, s);
+        cout << a + b << endl;
     }
-    system("pause");
     return 0;
 }
