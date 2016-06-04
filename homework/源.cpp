@@ -1,72 +1,61 @@
-#include<iostream>
-#include<cstdio>
-#include<algorithm>
-#include<cstring>
-#define max(a,b) ((a)>(b)?(a):(b))
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <string>
+int cmp[26][26];
+bool vis[26][26];
+#define nMen 1024
 using namespace std;
-const int MAX = 5005;
-
-struct point
-{
-    int r, c;
-}fro[MAX];
-int row, col;
-bool map[MAX][MAX];
-
-bool cmp(point a, point b)
-{
-    if (a.c == b.c) return a.r < b.r;
-    return a.c < b.c;
-}
-
-bool inMap(int r, int c)
-{
-    if (r > 0 && r <= row && c > 0 && c <= col) return true;
-    return false;
-}
-
-int getSum(int r, int c, int dr, int dc)
-{
-    int sum = 0;
-    while (inMap(r, c))
-    {
-        if (!map[r][c]) return 0;
-        r += dr;
-        c += dc;
-        sum++;
-    }
-    return sum;
-}
-
 int main()
 {
-    int n, i, j;
-    int r, c, dr, dc;
-    while (scanf("%d%d", &row, &col) != EOF)
+    int n;
+    cin >> n;
+    for (int i = 1; i <= n; i++)
     {
-        memset(map, 0, sizeof(map));
-        scanf("%d", &n);
-        for (i = 0; i < n; i++)
+        cout << "Case " << i << ':' << endl;
+        memset(cmp, 0, sizeof(cmp));
+        memset(vis, 0, sizeof(vis));
+        for (int i = 0; i < 26; i++)
+            for (int j = 0; j < 26; j++)
+                cmp[i][j] = nMen;
+        int m;
+        cin >> m;
+        for (int j = 0; j < m; j++)
         {
-            scanf("%d%d", &r, &c);
-            map[r][c] = 1;
-            fro[i].r = r;
-            fro[i].c = c;
-        }
-        sort(fro, fro + n, cmp);
-        int ans = 2;
-        for (i = 0; i < n - 1; i++)
-            for (j = i + 1; j < n; j++)
+            string tmp;
+            char left_c, right_c;
+            cin >> tmp;
+            if (tmp[1] == '>')
             {
-                dr = fro[j].r - fro[i].r;
-                dc = fro[j].c - fro[i].c;
-                if (fro[i].c + ans*dc > col) break;
-                if (inMap(fro[i].r - dr, fro[i].c - dc)) continue;
-                if (!inMap(fro[i].r + ans*dr, fro[i].c + ans*dc)) continue;
-                ans = max(ans, getSum(fro[i].r, fro[i].c, dr, dc));
+                left_c = tmp[2];
+                right_c = tmp[0];
             }
-        if (ans < 3) printf("0\n");
-        else printf("%d\n", ans);
+            else
+            {
+                left_c = tmp[0];
+                right_c = tmp[2];
+            }
+            cmp[left_c - 'A'][right_c - 'A'] = 0;
+            cmp[right_c - 'A'][left_c - 'A'] = 1;
+            vis[left_c - 'A'][right_c - 'A'] = true;
+            for (int k = 0; k < 26; k++)
+                for (int i = 0; i < 26; i++)
+                    for (int j = 0; j < 26; j++)
+                        if (cmp[i][k] == 0 && cmp[k][j] == 0 && cmp[i][j] != 0)
+                            cmp[i][j] = 0;
+        }
+        bool flag = true;
+        for (int i = 0; i < 26; i++)
+            for (int j = 0; j < 26; j++)                
+               if (cmp[i][j] == 0 && !vis[i][j])
+               {
+                   cout << char('A' + i) << '<' << char('A' + j) << endl;
+                   vis[i][j] = true;
+                   flag = false;
+               }
+        if (flag)
+            cout << "NONE" << endl;
     }
+    system("pause");
     return 0;
 }
