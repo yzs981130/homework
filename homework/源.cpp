@@ -1,60 +1,81 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
-#include <string>
-int cmp[26][26];
-bool vis[26][26];
-#define nMen 1024
+#include <queue>
 using namespace std;
+#define MAX 202
+char m[MAX][MAX];
+bool vis[MAX][MAX];
+int step[MAX][MAX];
+int r, c;
+int dir[4][2] = {{0, 1}, {-1, 0}, {0, -1}, {1, 0}};
+struct point
+{
+    int x;
+    int y;
+    point(int _x, int _y):x(_x), y(_y){}
+};
+bool is_valid(int x, int y)
+{
+    if (vis[x][y] == true || x >= r || x < 0 || y >= c || y < 0 || m[x][y] == '#')
+        return false;
+    return true;
+}
+int bfs(int b_x, int b_y, int e_x, int e_y)
+{
+    point p(b_x, b_y);
+    queue<point> q;
+    q.push(p);
+    vis[b_x][b_y] = true;
+    while (!q.empty())
+    {
+        point c = q.front();
+        q.pop();
+        if (c.x == e_x && c.y == e_y)
+            return step[e_x][e_y];
+        for (int i = 0; i < 4; i++)
+        {
+            if(!is_valid(c.x + dir[i][0], c.y + dir[i][1]))
+                continue;
+            point d(c.x + dir[i][0], c.y + dir[i][1]);
+            vis[c.x + dir[i][0]][c.y + dir[i][1]] = true;
+            q.push(d);
+            step[c.x + dir[i][0]][c.y + dir[i][1]] = step[c.x][c.y] + 1;
+        }
+    }
+    return -1;
+}
 int main()
 {
-    int n;
-    cin >> n;
-    for (int i = 1; i <= n; i++)
+    int t;
+    cin >> t;
+    while (t--)
     {
-        cout << "Case " << i << ':' << endl;
-        memset(cmp, 0, sizeof(cmp));
+        memset(m, 0, sizeof(m));
+        memset(step, 0, sizeof(step));
         memset(vis, 0, sizeof(vis));
-        for (int i = 0; i < 26; i++)
-            for (int j = 0; j < 26; j++)
-                cmp[i][j] = nMen;
-        int m;
-        cin >> m;
-        for (int j = 0; j < m; j++)
-        {
-            string tmp;
-            char left_c, right_c;
-            cin >> tmp;
-            if (tmp[1] == '>')
+        cin >> r >> c;
+        int b_x, b_y, e_x, e_y;
+        for (int i = 0; i < r; i++)
+            for (int j = 0; j < c; j++)
             {
-                left_c = tmp[2];
-                right_c = tmp[0];
+                cin >> m[i][j];
+                if (m[i][j] == 'S')
+                {
+                    b_x = i;
+                    b_y = j;
+                }
+                if (m[i][j] == 'E')
+                {
+                    e_x = i;
+                    e_y = j;
+                }
             }
-            else
-            {
-                left_c = tmp[0];
-                right_c = tmp[2];
-            }
-            cmp[left_c - 'A'][right_c - 'A'] = 0;
-            cmp[right_c - 'A'][left_c - 'A'] = 1;
-            vis[left_c - 'A'][right_c - 'A'] = true;
-            for (int k = 0; k < 26; k++)
-                for (int i = 0; i < 26; i++)
-                    for (int j = 0; j < 26; j++)
-                        if (cmp[i][k] == 0 && cmp[k][j] == 0 && cmp[i][j] != 0)
-                            cmp[i][j] = 0;
-        }
-        bool flag = true;
-        for (int i = 0; i < 26; i++)
-            for (int j = 0; j < 26; j++)                
-               if (cmp[i][j] == 0 && !vis[i][j])
-               {
-                   cout << char('A' + i) << '<' << char('A' + j) << endl;
-                   vis[i][j] = true;
-                   flag = false;
-               }
-        if (flag)
-            cout << "NONE" << endl;
+        int t = bfs(b_x, b_y, e_x, e_y);
+        if (t == -1)
+            cout << "oop!" << endl;
+        else
+            cout << t << endl;
     }
     system("pause");
     return 0;
